@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mortgage Calculator</title>
+  <style>
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f2f2f2, #e0e0e0);
+}
+
+.container {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 1000px;
+  width: 90%;
+  margin: 20px;
+  box-sizing: border-box;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.tablinks {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.tablinks button {
+  margin: 5px;
+  padding: 12px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  flex: 1;
+  min-width: 150px;
+}
+
+.tablinks button:hover {
+  background-color: #0056b3;
+}
+
+.tablinks button.active {
+  background-color: #0056b3;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.tabcontent {
+  display: none;
+}
+
+.tabcontent.active {
+  display: block;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.form-group input[type="number"],
+.form-group input[type="range"] {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 24px;
+  background-color: #28a745;
+  color: white;
+  text-align: center;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.btn:hover {
+  background-color: #218838;
+}
+
+.result, .charts, .amortization-schedule {
+  margin-top: 30px;
+}
+
+.charts canvas {
+  max-height: 400px;
+  width: 100%;
+  border-radius: 8px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: center;
+}
+
+.table th {
+  background-color: #f4f4f4;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+@media (max-width: 768px) {
+  .tablinks {
+    flex-direction: column;
+  }
+  .tablinks button {
+    min-width: 100%;
+  }
+}
+
+
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h2 class="text-center">Mortgage Calculator</h2>
+    <div class="tablinks">
+      <button class="active" id="defaultOpen" onclick="openTab(event, 'Islamic')">Islamic Mortgage</button>
+      <button onclick="openTab(event, 'Conventional')">Conventional Mortgage</button>
+    </div>
+
+    <!-- Islamic Mortgage -->
+    <div id="Islamic" class="tabcontent active">
+      <h3>Islamic Mortgage Calculator</h3>
+      <form onsubmit="event.preventDefault(); calculateIslamicMortgage();">
+        <div class="form-group">
+          <label for="homePrice">Home Price (KD):</label>
+          <input type="number" id="homePrice" value="300000" required>
+        </div>
+        <div class="form-group">
+          <label for="downPayment">Down Payment (KD):</label>
+          <input type="number" id="downPayment" value="60000" required>
+        </div>
+        <div class="form-group">
+          <label for="loanTerm">Loan Term (Years): <span id="loanTermValue">15</span></label>
+          <input type="range" id="loanTerm" min="1" max="30" value="15" required>
+        </div>
+        <div class="form-group">
+          <label for="profitRate">Profit Rate (%):</label>
+          <input type="number" id="profitRate" step="0.01" value="6.823" required>
+        </div>
+        <button type="submit" class="btn btn-block">Calculate</button>
+      </form>
+
+      <div class="result">
+        <h4>Results</h4>
+        <p>Total Payment: <span id="totalPayment"></span></p>
+        <p>Principal: <span id="principal"></span></p>
+        <p>Total Profit: <span id="totalProfit"></span></p>
+        <p>Monthly Payment: <span id="monthlyPayment"></span></p>
+      </div>
+
+      <div class="charts">
+        <canvas id="pieChart"></canvas>
+        <canvas id="lineChart" class="mt-4"></canvas>
+      </div>
+
+      <div class="amortization-schedule table-responsive">
+        <h4>Amortization Schedule</h4>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th>Interest Payment (KD)</th>
+              <th>Principal Payment (KD)</th>
+              <th>Remaining Principal (KD)</th>
+            </tr>
+          </thead>
+          <tbody id="amortizationSchedule"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Conventional Mortgage -->
+    <div id="Conventional" class="tabcontent">
+      <h3>Conventional Mortgage Calculator</h3>
+      <form onsubmit="event.preventDefault(); calculateConventionalMortgage();">
+        <div class="form-group">
+          <label for="c_homePrice">Home Price (KD):</label>
+          <input type="number" id="c_homePrice" required>
+        </div>
+        <div class="form-group">
+          <label for="c_downPayment">Down Payment (KD):</label>
+          <input type="number" id="c_downPayment" required>
+        </div>
+        <div class="form-group">
+          <label for="c_loanTerm">Loan Term (Years): <span id="c_loanTermValue">1</span></label>
+          <input type="range" id="c_loanTerm" min="1" max="30" value="1" required>
+        </div>
+        <div class="form-group">
+          <label for="c_interestRate">Interest Rate (%):</label>
+          <input type="number" id="c_interestRate" step="0.01" required>
+        </div>
+        <button type="submit" class="btn btn-block">Calculate</button>
+      </form>
+
+      <div class="result">
+        <h4>Results</h4>
+        <p>Total Payment: <span id="c_totalPayment"></span></p>
+        <p>Principal: <span id="c_principal"></span></p>
+        <p>Total Interest: <span id="c_totalInterest"></span></p>
+        <p>Monthly Payment: <span id="c_monthlyPayment"></span></p>
+      </div>
+
+      <div class="charts">
+        <canvas id="c_pieChart"></canvas>
+        <canvas id="c_lineChart" class="mt-4"></canvas>
+      </div>
+
+      <div class="amortization-schedule table-responsive">
+        <h4>Amortization Schedule</h4>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th>Interest Payment (KD)</th>
+              <th>Principal Payment (KD)</th>
+              <th>Remaining Principal (KD)</th>
+            </tr>
+          </thead>
+          <tbody id="c_amortizationSchedule"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <script>
+
+
+    // Function for opening tabs
+    function openTab(evt, tabName) {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+      }
+      tablinks = document.getElementsByClassName("tablinks")[0].getElementsByTagName("button");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+      document.getElementById(tabName).style.display = "block";
+      evt.currentTarget.className += " active";
+    }
+
+    // Set the default tab to be open
+    document.getElementById("defaultOpen").click();
+
+    // Islamic Mortgage Calculator Logic
+    function calculateIslamicMortgage() {
+      // Retrieve input values
+      let homePrice = parseFloat(document.getElementById("homePrice").value);
+      let downPayment = parseFloat(document.getElementById("downPayment").value);
+      let loanTerm = parseInt(document.getElementById("loanTerm").value);
+      let profitRate = parseFloat(document.getElementById("profitRate").value) / 100;
+
+      // Calculate values
+      let loanAmount = homePrice - downPayment;
+      let numPayments = loanTerm * 12;
+      let monthlyRate = profitRate / 12;
+      let monthlyPayment = loanAmount * (monthlyRate * Math.pow((1 + monthlyRate), numPayments)) / (Math.pow((1 + monthlyRate), numPayments) - 1);
+      let totalPayment = monthlyPayment * numPayments;
+      let totalProfit = totalPayment - loanAmount;
+
+      // Display results
+      document.getElementById("totalPayment").textContent = `KD ${totalPayment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById("principal").textContent = `KD ${loanAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById("totalProfit").textContent = `KD ${totalProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById("monthlyPayment").textContent = `KD ${monthlyPayment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+
+      // Generate charts and amortization schedule
+      generateCharts("pieChart", loanAmount, totalProfit);
+      generateLineChart("lineChart", loanAmount, monthlyRate, numPayments, monthlyPayment);
+      generateAmortizationSchedule("amortizationSchedule", loanAmount, monthlyRate, numPayments, monthlyPayment);
+    }
+
+    // Conventional Mortgage Calculator Logic
+    function calculateConventionalMortgage() {
+      // Retrieve input values
+      let homePrice = parseFloat(document.getElementById("c_homePrice").value);
+      let downPayment = parseFloat(document.getElementById("c_downPayment").value);
+      let loanTerm = parseInt(document.getElementById("c_loanTerm").value);
+      let interestRate = parseFloat(document.getElementById("c_interestRate").value) / 100;
+
+      // Calculate values
+      let loanAmount = homePrice - downPayment;
+      let numPayments = loanTerm * 12;
+      let monthlyRate = interestRate / 12;
+      let monthlyPayment = loanAmount * (monthlyRate * Math.pow((1 + monthlyRate), numPayments)) / (Math.pow((1 + monthlyRate), numPayments) - 1);
+      let totalPayment = monthlyPayment * numPayments;
+      let totalInterest = totalPayment - loanAmount;
+
+      // Display results
+      document.getElementById("c_totalPayment").textContent = `KD ${totalPayment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById("c_principal").textContent = `KD ${loanAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById("c_totalInterest").textContent = `KD ${totalInterest.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById("c_monthlyPayment").textContent = `KD ${monthlyPayment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+
+      // Generate charts and amortization schedule
+      generateCharts("c_pieChart", loanAmount, totalInterest);
+      generateLineChart("c_lineChart", loanAmount, monthlyRate, numPayments, monthlyPayment);
+      generateAmortizationSchedule("c_amortizationSchedule", loanAmount, monthlyRate, numPayments, monthlyPayment);
+    }
+
+// Object to keep track of existing charts
+const charts = {};
+
+// Function to destroy existing chart
+function destroyChart(canvasId) {
+  if (charts[canvasId]) {
+    charts[canvasId].destroy();
+    delete charts[canvasId];
+  }
+}
+
+// Generate Pie Chart
+function generateCharts(canvasId, principal, interest) {
+  destroyChart(canvasId); // Destroy existing chart if any
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  charts[canvasId] = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Principal', 'Interest'],
+      datasets: [{
+        data: [principal, interest],
+        backgroundColor: ['#4caf50', '#ff5722']
+      }]
+    },
+    options: {
+      responsive: true
+    }
+  });
+}
+
+// Generate Line Chart
+function generateLineChart(canvasId, principal, monthlyRate, numPayments, monthlyPayment) {
+  destroyChart(canvasId); // Destroy existing chart if any
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  charts[canvasId] = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: Array.from({ length: numPayments }, (_, i) => i + 1),
+      datasets: [
+        {
+          label: 'Remaining Principal',
+          data: generateLineChartData(principal, monthlyRate, numPayments, monthlyPayment, 'remainingPrincipal'),
+          borderColor: '#3e95cd',
+          fill: false
+        },
+        {
+          label: 'Accumulated Interest',
+          data: generateLineChartData(principal, monthlyRate, numPayments, monthlyPayment, 'accumulatedInterest'),
+          borderColor: '#ff5722',
+          fill: false
+        },
+        {
+          label: 'Accumulated Principal',
+          data: generateLineChartData(principal, monthlyRate, numPayments, monthlyPayment, 'accumulatedPrincipal'),
+          borderColor: '#4caf50',
+          fill: false
+        }
+      ]
+    },
+    options: {
+      responsive: true
+    }
+  });
+}
+
+// Helper function to generate line chart data
+function generateLineChartData(principal, monthlyRate, numPayments, monthlyPayment, type) {
+  let remainingPrincipal = principal;
+  let accumulatedInterest = 0;
+  let accumulatedPrincipal = 0;
+
+  const data = [];
+
+  for (let i = 1; i <= numPayments; i++) {
+    const interestPayment = remainingPrincipal * monthlyRate;
+    const principalPayment = monthlyPayment - interestPayment;
+    remainingPrincipal -= principalPayment;
+
+    if (type === 'remainingPrincipal') {
+      data.push(remainingPrincipal.toFixed(2));
+    } else if (type === 'accumulatedInterest') {
+      accumulatedInterest += interestPayment;
+      data.push(accumulatedInterest.toFixed(2));
+    } else if (type === 'accumulatedPrincipal') {
+      accumulatedPrincipal += principalPayment;
+      data.push(accumulatedPrincipal.toFixed(2));
+    }
+  }
+
+  return data;
+}
+
+
+    // Generate Amortization Schedule
+    function generateAmortizationSchedule(tableBodyId, principal, monthlyRate, numPayments, monthlyPayment) {
+      const tableBody = document.getElementById(tableBodyId);
+      tableBody.innerHTML = '';  // Clear existing table rows
+
+      let remainingPrincipal = principal;
+
+      for (let i = 1; i <= numPayments; i++) {
+        const interestPayment = remainingPrincipal * monthlyRate;
+        const principalPayment = monthlyPayment - interestPayment;
+        remainingPrincipal -= principalPayment;
+
+        // Format the numbers
+        const formattedInterestPayment = interestPayment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const formattedPrincipalPayment = principalPayment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const formattedRemainingPrincipal = remainingPrincipal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        // Create a new row and populate it
+        const row = document.createElement('tr');
+        row.innerHTML = `
+      <td>${i}</td>
+      <td>${formattedInterestPayment}</td>
+      <td>${formattedPrincipalPayment}</td>
+      <td>${formattedRemainingPrincipal}</td>
+    `;
+        tableBody.appendChild(row);
+      }
+    }
+
+    // Update the displayed loan term value for the sliders
+    document.getElementById('loanTerm').addEventListener('input', function () {
+      document.getElementById('loanTermValue').textContent = this.value;
+    });
+
+    document.getElementById('c_loanTerm').addEventListener('input', function () {
+      document.getElementById('c_loanTermValue').textContent = this.value;
+    });
+
+  </script>
+</body>
+
+</html>
