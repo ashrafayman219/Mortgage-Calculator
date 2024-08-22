@@ -9,6 +9,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
     integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -45,12 +46,16 @@
 
       <section class="results">
         <h2>Results</h2>
-        <p>Total Payment: <span id="totalPayment">0</span> KD</p>
-        <p>Principal: <span id="principal">0</span> KD</p>
-        <p>Total Interest: <span id="totalInterest">0</span> KD</p>
-        <p>Monthly Interest Payment: <span id="monthlyInterest">0</span> KD</p>
-        <p>Monthly Principal: <span id="monthlyPrincipal">0</span> KD</p>
+        <p>Total Payment: <span id="totalPayment"></span> KD</p>
+        <p>Principal: <span id="principal"></span> KD</p>
+        <p>Total Interest: <span id="totalInterest"></span> KD</p>
+        <p>Monthly Interest Payment: <span id="monthlyInterest"></span> KD</p>
+        <p>Monthly Principal: <span id="monthlyPrincipal"></span> KD</p>
+        <p>Total Installment Count: <span id="totalInstallmentCount"></span></p>
+        <p>Monthly Interest Rate: <span id="monthlyInterestRate"></span>%</p>
       </section>
+
+      <canvas id="resultsChart" width="400" height="400"></canvas>
 
       <section class="table-container">
         <h2>Amortization Schedule</h2>
@@ -60,11 +65,11 @@
               <th>Month</th>
               <th>Interest Payment (KD)</th>
               <th>Principal Payment (KD)</th>
-              <th>Total Installment</th>
+              <th>Total Installment (KD)</th>
               <th>Remaining Principal (KD)</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="paymentTableBody">
             <!-- Rows will be added dynamically by JavaScript -->
           </tbody>
         </table>
