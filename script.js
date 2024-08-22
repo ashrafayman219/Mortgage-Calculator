@@ -22,6 +22,7 @@ document.getElementById("calculateBtn").addEventListener("click", function () {
   const denominator =
     Math.pow(1 + monthlyInterestRate, totalInstallmentsCount) - 1;
   const monthlyPayment = numerator / denominator;
+  let totalMonthlyInstallment = monthlyPayment;
 
   const totalInterest = monthlyPayment * totalInstallmentsCount - principal;
   const totalPayment = principal + totalInterest;
@@ -31,8 +32,8 @@ document.getElementById("calculateBtn").addEventListener("click", function () {
   document.getElementById("totalPayment").innerText = totalPayment.toFixed(2);
   document.getElementById("principal").innerText = principal.toFixed(2);
   document.getElementById("totalInterest").innerText = totalInterest.toFixed(2);
-  document.getElementById("totalInstallmentCount").innerText =
-    totalInstallmentsCount;
+  document.getElementById("totalInstallmentCount").innerText = totalInstallmentsCount;
+  document.getElementById("totalMonthlyInstallment").innerText = totalMonthlyInstallment.toFixed(2);
   document.getElementById("monthlyInterestRate").innerText = (monthlyInterestRate01);
   console.log(monthlyInterestRate01, "UUUU")
 
@@ -312,10 +313,10 @@ document
     doc.setFontSize(10);
     doc.text(`Generated on: ${formattedDate}`, 20, 30);
 
-    doc.setFontSize(16);
+    doc.setFontSize(14);
     doc.setDrawColor(0, 0, 0);
     doc.setFillColor(220, 220, 220);
-    doc.roundedRect(10, 40, 190, 20, 3, 3, "F");
+    doc.roundedRect(10, 40, 190, 40, 3, 3, "F");
     doc.text(
       `Home Price: ${document.getElementById("homePrice").value} KD`,
       15,
@@ -361,16 +362,23 @@ document
     );
     doc.text(
       `Total Interest: ${
-        document.getElementById("totalInstallmentCount").textContent
-      }`,
+        document.getElementById("totalMonthlyInstallment").textContent
+      } KD`,
       110,
       90
     );
     doc.text(
       `Total Interest: ${
+        document.getElementById("totalInstallmentCount").textContent
+      }`,
+      15,
+      100
+    );
+    doc.text(
+      `Total Interest: ${
         document.getElementById("monthlyInterestRate").textContent
       } %`,
-      15,
+      110,
       100
     );
 
