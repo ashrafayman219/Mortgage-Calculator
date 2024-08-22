@@ -76,7 +76,7 @@ label {
 }
 
 input[type="number"] {
-  width: calc(100% - 20px);
+  width: calc(100% - 1px);
   padding: 10px;
   margin-bottom: 10px;
   border: 1px solid #ddd;
@@ -158,3 +158,139 @@ th {
   }
 }
 
+
+
+
+
+
+.fade-in {
+  animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.slide-in {
+  animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+
+.tab-button {
+  transition: background 0.3s, color 0.3s;
+}
+
+.input-container input,
+.results p,
+button {
+  transition: all 0.3s ease;
+}
+
+.input-container input:focus {
+  border-color: #7451a9;
+  box-shadow: 0 0 5px rgba(116, 81, 169, 0.5);
+}
+
+button {
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+  background-color: #7451a9;
+  transform: scale(1.05);
+}
+
+
+.input-container {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.input-container i {
+  position: absolute;
+  left: 10px;
+  top: 57%;
+  transform: translateY(-50%);
+  color: #7451a9;
+}
+
+.input-container input {
+  padding-left: 40px;
+}
+
+
+.hidden {
+  display: none;
+}
+
+/* Back to Top Button */
+#backToTop {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #481462; /* Change to your app's color */
+  color: white;
+  padding: 10px;
+  border-radius: 50%;
+  display: none;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out, background-color 0.3s ease;
+  z-index: 1000;
+}
+
+#backToTop i {
+  font-size: 20px;
+}
+
+/* Hover Animation */
+#backToTop:hover {
+  transform: scale(1.2);
+  background-color: #7451a9; /* Slightly darker shade */
+}
+
+/* Scroll Animation */
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Show Button when Scrolling */
+#backToTop.show {
+  display: block;
+  animation: fadeInUp 0.5s;
+}
+
+
+.chart-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .chart-container {
+      flex-direction: row;
+  }
+}
+
+canvas {
+  margin: 20px;
+  max-width: 100%;
+  height: auto;
+}
