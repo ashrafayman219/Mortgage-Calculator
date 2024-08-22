@@ -361,21 +361,21 @@ document
       90
     );
     doc.text(
-      `Total Interest: ${
+      `Total Monthly Installment: ${
         document.getElementById("totalMonthlyInstallment").textContent
       } KD`,
       110,
       90
     );
     doc.text(
-      `Total Interest: ${
+      `Total Installment Count: ${
         document.getElementById("totalInstallmentCount").textContent
       }`,
       15,
       100
     );
     doc.text(
-      `Total Interest: ${
+      `Monthly Interest Rate: ${
         document.getElementById("monthlyInterestRate").textContent
       } %`,
       110,
@@ -546,3 +546,17 @@ document.getElementById("backToTop").addEventListener("click", function(event) {
     behavior: "smooth"
   });
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
