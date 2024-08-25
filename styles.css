@@ -294,3 +294,29 @@ canvas {
   max-width: 100%;
   height: auto;
 }
+
+
+/* Error messages */
+.error-message {
+  position: absolute;
+  color: red;
+  font-size: 0.875em;
+  bottom: -20px; /* Adjust this value based on your layout */
+  left: 0;
+  display: block;
+  animation: slideIn 0.5s ease-out;
+}
+
+
+
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
