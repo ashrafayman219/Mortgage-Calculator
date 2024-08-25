@@ -136,9 +136,10 @@ document.getElementById("calculateBtn").addEventListener("click", function () {
     remainingPrincipalData.push(remainingPrincipal);
   }
 
-      // Scroll to results section
-      document.querySelector('.results').scrollIntoView({ behavior: 'smooth' });
-
+  setTimeout(() => {
+    document.querySelector('.results').scrollIntoView({ behavior: 'smooth' });
+  }, 100); // Adjust the timeout duration if needed
+  
   // Show chart and table after calculations
   document.getElementById("chartContainer").classList.remove("hidden");
   document.getElementById("amortizationTable").classList.remove("hidden");
