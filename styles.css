@@ -177,10 +177,10 @@ th {
 }
 
 .slide-in {
-  animation: slideIn 0.5s ease-out;
+  animation: slideIn01 0.5s ease-out;
 }
 
-@keyframes slideIn {
+@keyframes slideIn01 {
   from {
     transform: translateX(-100%);
   }
