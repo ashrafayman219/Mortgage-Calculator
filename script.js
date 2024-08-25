@@ -178,28 +178,28 @@ function createPieChart(totalPayment, principal, totalInterest) {
         },
       },
     },
-    plugins: [
-      {
-        id: "totalLabel",
-        afterDatasetsDraw(chart) {
-          const { ctx, data } = chart;
-          const total = data.datasets[0].data.reduce(
-            (acc, val) => acc + val,
-            0
-          );
-          ctx.save();
-          ctx.font = "bold 20px Arial";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillStyle = "#000";
-          ctx.fillText(
-            `Total: ${total.toLocaleString()} KD`,
-            chart.chartArea.width / 2,
-            chart.chartArea.height / 2
-          );
-        },
-      },
-    ],
+    // plugins: [
+    //   {
+    //     id: "totalLabel",
+    //     afterDatasetsDraw(chart) {
+    //       const { ctx, data } = chart;
+    //       const total = data.datasets[0].data.reduce(
+    //         (acc, val) => acc + val,
+    //         0
+    //       );
+    //       ctx.save();
+    //       ctx.font = "bold 20px Arial";
+    //       ctx.textAlign = "center";
+    //       ctx.textBaseline = "middle";
+    //       ctx.fillStyle = "#000";
+    //       ctx.fillText(
+    //         `Total: ${total.toLocaleString()} KD`,
+    //         chart.chartArea.width / 2,
+    //         chart.chartArea.height / 2
+    //       );
+    //     },
+    //   },
+    // ],
   });
 }
 
