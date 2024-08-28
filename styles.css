@@ -160,6 +160,32 @@ th {
 
 
 
+.chart-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .chart-container {
+    flex-direction: row;
+  }
+}
+
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Example specific to Islamic calculator */
+#chartContainerIslamic {
+  margin-top: 20px;
+}
 
 
 
