@@ -408,7 +408,7 @@ document
     const doc = new jsPDF();
 
     const websiteUrl = "https://pinastra.com/?lang=ar_ar";
-    const linkText = "Pinastra"; // The word that will be clickable
+    const linkText = "Pinastra.com"; // The word that will be clickable
 
     const now = new Date();
     const hours = now.getHours();
@@ -683,3 +683,441 @@ document
       behavior: "smooth",
     });
   });
+
+
+
+
+// Islamic
+// Event listener for the Islamic Calculator
+document.getElementById("calculateBtnIslamic").addEventListener("click", function () {
+  const fields = validateInputsIslamic();
+  let hasErrors = false;
+
+  Object.keys(fields).forEach((key) => {
+      const field = fields[key];
+      const errorElement = document.getElementById(`${key}IslamicError`);
+      if (field.error) {
+          errorElement.innerText = field.error;
+          errorElement.style.display = "block";
+          hasErrors = true;
+      } else {
+          errorElement.style.display = "none";
+      }
+  });
+
+  if (hasErrors) return;
+
+  const homePrice = fields.homePrice.value;
+  const downPayment = fields.downPayment.value;
+  const loanYears = fields.loanYears.value;
+  const profitRate = fields.profitRate.value ? fields.profitRate.value / 100 : null;
+  const profitRate01 = fields.profitRate.value ? fields.profitRate.value / 12 : null;
+  const bankProfit = fields.bankProfit.value ? fields.bankProfit.value : null;
+
+  let principal = homePrice - downPayment;
+  let loanValue = principal;
+  let totalInstallmentsCount = loanYears * 12;
+  let monthlyProfitRate = profitRate ? profitRate / 12 : null;
+  let monthlyInstallment, totalPayment, calculatedBankProfit;
+  let monthlyProfitRate001;
+  let monthlyProfitRate0001;
+  if (profitRate) {
+      monthlyProfitRate001 = profitRate01;
+      // Case 1: User entered Profit Rate
+      const numerator = loanValue * monthlyProfitRate * Math.pow(1 + monthlyProfitRate, totalInstallmentsCount);
+      const denominator = Math.pow(1 + monthlyProfitRate, totalInstallmentsCount) - 1;
+      monthlyInstallment = numerator / denominator;
+      totalPayment = monthlyInstallment * totalInstallmentsCount;
+      calculatedBankProfit = totalPayment - principal;
+      console.log(monthlyProfitRate, "monthlyProfitRatemonthlyProfitRatemonthlyProfitRatemonthlyProfitRatemonthlyProfitRate");
+      document.getElementById("bankProfitIslamic").disabled = true;
+  } else if (bankProfit) {
+      // Case 2: User entered Bank Profit
+      calculatedBankProfit = bankProfit;
+      const totalLoanValue = loanValue + bankProfit;
+      totalPayment = totalLoanValue;
+      monthlyInstallment = totalPayment / totalInstallmentsCount;
+      monthlyProfitRate = (bankProfit / loanYears) / loanValue;
+      monthlyProfitRate001 = monthlyProfitRate;
+      console.log(monthlyProfitRate001, "monthlyProfitRate001");
+      console.log(monthlyProfitRate, "monthlyProfitRate");
+      document.getElementById("profitRateIslamic").disabled = true;
+  } else {
+      // Case 3: Default to 7.25% Profit Rate
+      monthlyProfitRate = (7.25 / 12) / 100;
+      monthlyProfitRate0001 = 7.25 / 12;
+      monthlyProfitRate001 = monthlyProfitRate0001;
+      const numerator = loanValue * monthlyProfitRate * Math.pow(1 + monthlyProfitRate, totalInstallmentsCount);
+      const denominator = Math.pow(1 + monthlyProfitRate, totalInstallmentsCount) - 1;
+      monthlyInstallment = numerator / denominator;
+      totalPayment = monthlyInstallment * totalInstallmentsCount;
+      calculatedBankProfit = totalPayment - principal;
+  }
+
+  setTimeout(() => {
+    document.querySelector('.results').scrollIntoView({ behavior: 'smooth' });
+  }, 100); // Adjust the timeout duration if needed
+  
+
+  document.getElementById("totalPaymentIslamic").innerText = totalPayment.toFixed(2);
+  document.getElementById("principalIslamic").innerText = principal.toFixed(2);
+  document.getElementById("bankProfitResultIslamic").innerText = calculatedBankProfit.toFixed(2);
+  document.getElementById("monthlyInstallmentIslamic").innerText = monthlyInstallment.toFixed(2);
+  document.getElementById("totalInstallmentCountIslamic").innerText = totalInstallmentsCount;
+  document.getElementById("monthlyProfitRateIslamic").innerText = monthlyProfitRate001.toFixed(2);
+
+  document.getElementById("amortizationTableIslamic").classList.remove("hidden");
+  document.getElementById("downloadPdfBtnIslamic").disabled = false;
+
+  generateAmortizationTableIslamic(totalPayment, principal, totalInstallmentsCount, monthlyInstallment);
+
+  createPieChartIslamic(totalPayment, principal, bankProfit);
+
+  createLineChartIslamic(accumulatedPrincipalData, remainingPrincipalData)
+
+
+});
+
+function validateInputsIslamic() {
+  const fields = {
+      homePrice: {
+          value: parseFloat(document.getElementById("homePriceIslamic").value),
+          min: 0,
+          error: "",
+      },
+      downPayment: {
+          value: parseFloat(document.getElementById("downPaymentIslamic").value),
+          min: 0,
+          error: "",
+      },
+      loanYears: {
+          value: parseInt(document.getElementById("loanYearsIslamic").value),
+          min: 1,
+          error: "",
+      },
+      profitRate: {
+          value: parseFloat(document.getElementById("profitRateIslamic").value),
+          min: 0,
+          error: "",
+      },
+      bankProfit: {
+          value: parseFloat(document.getElementById("bankProfitIslamic").value),
+          min: 0,
+          error: "",
+      },
+  };
+
+  Object.keys(fields).forEach((key) => {
+      const field = fields[key];
+      if (isNaN(field.value) && key !== 'profitRate' && key !== 'bankProfit') {
+          field.error = `Please enter a valid number for ${key
+              .replace(/([A-Z])/g, " $1")
+              .toLowerCase()}. Enter '0' if not applicable.`;
+      } else if (field.value < field.min) {
+          field.error = `Value for ${key
+              .replace(/([A-Z])/g, " $1")
+              .toLowerCase()} must be at least ${field.min}.`;
+      }
+  });
+
+  return fields;
+}
+let pieChartInstanceIslamic = null;
+let lineChartInstanceIslamic = null;
+
+function createPieChartIslamic(totalPayment, principal, bankProfit) {
+  const ctx = document.getElementById("resultsChartIslamic").getContext("2d");
+  if (pieChartInstanceIslamic) {
+    pieChartInstanceIslamic.destroy();
+  }
+
+  const data = {
+    labels: ["Principal", "Bank Profit"],
+    datasets: [{
+      data: [principal, bankProfit],
+      backgroundColor: ["#481462", "#7451a9"]
+    }]
+  };
+
+  pieChartInstanceIslamic = new Chart(ctx, {
+    type: "pie",
+    data: data,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: {
+            font: {
+              size: 14,
+              weight: 'bold'
+            },
+            color: "#333"
+          }
+        },
+        datalabels: {
+          color: "#fff",
+          font: {
+            size: 16,
+            weight: 'bold'
+          },
+          formatter: (value) => `${value.toFixed(2)} KD`,
+          textAlign: 'center',
+          align: 'center',
+          padding: { top: 5, bottom: 5 },
+          borderRadius: 5,
+          backgroundColor: 'rgba(0, 0, 0, 0.7)'
+        }
+      }
+    },
+    plugins: [ChartDataLabels]
+  });
+}
+
+function createLineChartIslamic(accumulatedPrincipalData, remainingPrincipalData) {
+  const ctx = document.getElementById("lineChartIslamic").getContext("2d");
+  if (lineChartInstanceIslamic) {
+    lineChartInstanceIslamic.destroy();
+  }
+
+  lineChartInstanceIslamic = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: Array.from({ length: accumulatedPrincipalData.length }, (_, i) => i + 1),
+      datasets: [{
+        label: "Accumulated Principal (KD)",
+        data: accumulatedPrincipalData,
+        borderColor: "#481462",
+        fill: false,
+        tension: 0.1
+      },
+      {
+        label: "Remaining Principal (KD)",
+        data: remainingPrincipalData,
+        borderColor: "#FF6F61",
+        fill: false,
+        tension: 0.1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "bottom"
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: "Month" }
+        },
+        y: {
+          title: { display: true, text: "Amount (KD)" },
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+
+function generateAmortizationTableIslamic(totalPayment, principal, totalInstallmentsCount, monthlyInstallment) {
+  let remainingPrincipal = totalPayment;
+  let tableRows = "";
+
+  tableRows += `<tr>
+  <td>0</td>
+  <td>0.00</td>
+  <td>${remainingPrincipal.toFixed(2)}</td>
+</tr>`;
+
+  for (let i = 1; i <= totalInstallmentsCount; i++) {
+      remainingPrincipal -= monthlyInstallment;
+      if (remainingPrincipal < 0) remainingPrincipal = 0;
+
+      tableRows += `<tr>
+                      <td>${i}</td>
+                      <td>${monthlyInstallment.toFixed(2)}</td>
+                      <td>${remainingPrincipal.toFixed(2)}</td>
+                    </tr>`;
+  }
+
+  document.getElementById("paymentTableBodyIslamic").innerHTML = tableRows;
+
+  // Pagination logic
+  let currentPage = 1;
+  const rowsPerPage = 10;
+  const rows = document.getElementById("paymentTableBodyIslamic").getElementsByTagName("tr");
+
+  function showPage(page) {
+      currentPage = page;
+      for (let i = 0; i < rows.length; i++) {
+          rows[i].style.display = i >= (page - 1) * rowsPerPage && i < page * rowsPerPage ? "" : "none";
+      }
+      document.getElementById("prevPageIslamic").disabled = currentPage === 1;
+      document.getElementById("nextPageIslamic").disabled = currentPage * rowsPerPage >= rows.length;
+  }
+
+  showPage(1);
+
+  document.getElementById("prevPageIslamic").addEventListener("click", function () {
+      if (currentPage > 1) showPage(currentPage - 1);
+  });
+
+  document.getElementById("nextPageIslamic").addEventListener("click", function () {
+      if (currentPage * rowsPerPage < rows.length) showPage(currentPage + 1);
+  });
+}
+
+document.getElementById("downloadPdfBtnIslamic").addEventListener("click", function () {
+  const img = new Image();
+  img.src = "Image URL";  // Replace with your actual image URL
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  const websiteUrl = "https://pinastra.com/?lang=ar_ar";
+  const linkText = "Pinastra.com";  // The word that will be clickable
+
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const formattedTime = `${hours % 12 || 12}:${minutes < 10 ? "0" + minutes : minutes} ${ampm}`;
+  const formattedDate = `${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()} ${formattedTime}`;
+
+  img.onload = function () {
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const imgWidth = 30;
+    const imgHeight = 30;
+    const xOffset = pageWidth - imgWidth - 10;
+    const yOffset = 10;
+
+    doc.addImage(img, "JPEG", xOffset, yOffset, imgWidth, imgHeight);
+
+    doc.setFontSize(22);
+    doc.text("Islamic Mortgage Calculator Results", 20, 20);
+
+    doc.setFontSize(12);
+    doc.setTextColor(88, 17, 143);
+    doc.textWithLink(linkText, 20, 28, { url: websiteUrl });
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Generated on: ${formattedDate}`, 20, 35);
+
+    doc.setFontSize(14);
+    doc.setDrawColor(0, 0, 0);
+    doc.setFillColor(220, 220, 220);
+    doc.roundedRect(10, 40, 190, 40, 3, 3, "F");
+    doc.text(`Home Price: ${document.getElementById("homePriceIslamic").value} KD`, 15, 50);
+    doc.text(`Down Payment: ${document.getElementById("downPaymentIslamic").value} KD`, 110, 50);
+    doc.text(`Loan Years: ${document.getElementById("loanYearsIslamic").value}`, 15, 60);
+    doc.text(`Profit Rate: ${document.getElementById("profitRateIslamic").value || "7.25 (Default)"}%`, 110, 60);
+
+    doc.setFontSize(14);
+    doc.setFillColor(245, 245, 245);
+    doc.roundedRect(10, 70, 190, 50, 3, 3, "F");
+    doc.text(`Total Payment: ${document.getElementById("totalPaymentIslamic").textContent} KD`, 15, 80);
+    doc.text(`Principal: ${document.getElementById("principalIslamic").textContent} KD`, 110, 80);
+    doc.text(`Bank Profit: ${document.getElementById("bankProfitResultIslamic").textContent} KD`, 15, 90);
+    doc.text(`Monthly Installment: ${document.getElementById("monthlyInstallmentIslamic").textContent} KD`, 110, 90);
+    doc.text(`Total Installment Count: ${document.getElementById("totalInstallmentCountIslamic").textContent}`, 15, 100);
+    doc.text(`Monthly Profit Rate: ${document.getElementById("monthlyProfitRateIslamic").textContent} %`, 110, 100);
+
+    // Optionally add charts
+    const chartCanvas = document.getElementById("resultsChartIslamic");
+    if (chartCanvas) {
+      const chartImage = chartCanvas.toDataURL("image/png");
+      doc.addImage(chartImage, "PNG", 10, 130, 85, 85);
+    }
+
+    const lineChartCanvas = document.getElementById("lineChartIslamic");
+    if (lineChartCanvas) {
+      const lineChartImage = lineChartCanvas.toDataURL("image/png");
+      doc.addImage(lineChartImage, "PNG", 100, 130, 95, 95);
+    }
+
+    // Amortization Table
+    const table = document.getElementById("amortizationTableIslamic");
+    let x = 10, y = 240;
+    const pageHeight = doc.internal.pageSize.height;
+    const tablePadding = 10;
+    const rowHeight = 8;
+
+    doc.setFontSize(14);
+    doc.text("Amortization Schedule - Full Table", x, y);
+    y += 10;
+
+    const headers = ["Month", "Monthly Installment (KD)", "Remaining Principal (KD)"];
+    const columnWidths = [30, 80, 80];
+    const columnSpacing = 4;
+    const totalWidth = columnWidths.reduce((a, b) => a + b, 0) + (columnWidths.length - 1) * columnSpacing;
+    const tableWidth = totalWidth + tablePadding * 2;
+
+    function addTableHeader() {
+      x = (pageWidth - tableWidth) / 2;
+      doc.setFontSize(10);
+      doc.setDrawColor(0, 0, 0);
+      doc.setFillColor(220, 220, 220);
+      doc.rect(x, y, tableWidth, rowHeight, "F");
+
+      let headerX = x + tablePadding;
+      headers.forEach((header, index) => {
+        doc.text(header, headerX + index * (columnWidths[index] + columnSpacing) + columnWidths[index] / 2, y + 6, { align: "center" });
+      });
+
+      y += rowHeight;
+    }
+
+    addTableHeader();
+
+    const rows = document.querySelectorAll("#amortizationTableIslamic tbody tr");
+    for (let i = 0; i < rows.length; i++) {
+      if (y + rowHeight > pageHeight - 20) {
+        doc.addPage();
+        y = 20;
+        addTableHeader();
+      }
+      const cells = Array.from(rows[i].querySelectorAll("td")).map(td => td.textContent);
+      let cellX = x + tablePadding;
+      cells.forEach((cell, index) => {
+        doc.text(cell, cellX + index * (columnWidths[index] + columnSpacing) + columnWidths[index] / 2, y + 6, { align: "center" });
+      });
+      y += rowHeight;
+    }
+
+    const totalPages = doc.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      doc.setFontSize(10);
+      doc.text(`Page ${i} of ${totalPages}`, 180, 290);
+      doc.setTextColor(88, 17, 143);
+      doc.textWithLink(linkText, 10, 285, { url: websiteUrl });
+      doc.setTextColor(0, 0, 0);
+      doc.text(`Generated on ${formattedDate}`, 10, 290);
+    }
+
+    doc.save("islamic_mortgage_calculator_results.pdf");
+  };
+});
+
+// Disable PDF button on input change
+document.querySelectorAll("#homePriceIslamic, #downPaymentIslamic, #loanYearsIslamic, #profitRateIslamic, #bankProfitIslamic").forEach(input => {
+  input.addEventListener("input", function () {
+    document.getElementById("downloadPdfBtnIslamic").disabled = true;
+  });
+});
+
+
+// Reset fields on input change
+document.querySelectorAll("#profitRateIslamic, #bankProfitIslamic").forEach((input) => {
+  input.addEventListener("input", function () {
+      document.getElementById("downloadPdfBtnIslamic").disabled = true;
+      if (input.id === "profitRateIslamic" && input.value) {
+          document.getElementById("bankProfitIslamic").disabled = true;
+      } else if (input.id === "bankProfitIslamic" && input.value) {
+          document.getElementById("profitRateIslamic").disabled = true;
+      } else {
+          document.getElementById("profitRateIslamic").disabled = false;
+          document.getElementById("bankProfitIslamic").disabled = false;
+      }
+  });
+});

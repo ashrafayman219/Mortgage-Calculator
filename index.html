@@ -98,10 +98,79 @@
       </section>
     </div>
     
-    <!-- Islamic Calculator Tab (Placeholder) -->
-    <div class="tab-content islamic">
-      <p>Islamic Calculator content will be added here.</p>
+<!-- Islamic Calculator Tab -->
+<div class="tab-content islamic">
+  <section class="inputs">
+    <div class="input-container">
+      <i class="fas fa-home"></i>
+      <label for="homePriceIslamic">Home Price (KD):</label>
+      <input type="number" id="homePriceIslamic" placeholder="Enter Home Price">
+      <div id="homePriceIslamicError" class="error-message"></div>
     </div>
+
+    <div class="input-container">
+      <i class="fas fa-dollar-sign"></i>
+      <label for="downPaymentIslamic">Down Payment (KD):</label>
+      <input type="number" id="downPaymentIslamic" placeholder="Enter Down Payment">
+      <div id="downPaymentIslamicError" class="error-message"></div>
+    </div>
+
+    <div class="input-container">
+      <i class="fas fa-calendar-alt"></i>
+      <label for="loanYearsIslamic">Loan Years:</label>
+      <input type="number" id="loanYearsIslamic" max="15" placeholder="Enter Loan Years">
+      <div id="loanYearsIslamicError" class="error-message"></div>
+    </div>
+
+    <div class="input-container">
+      <i class="fas fa-percent"></i>
+      <label for="profitRateIslamic">Profit Rate (%):</label>
+      <input type="number" id="profitRateIslamic" placeholder="Enter Profit Rate">
+      <div id="profitRateIslamicError" class="error-message"></div>
+    </div>
+
+    <div class="input-container">
+      <i class="fas fa-coins"></i>
+      <label for="bankProfitIslamic">Bank Profit (KD):</label>
+      <input type="number" id="bankProfitIslamic" placeholder="Enter Bank Profit">
+      <div id="bankProfitIslamicError" class="error-message"></div>
+    </div>
+
+    <button id="calculateBtnIslamic">Calculate</button>
+  </section>
+
+  <section class="results">
+    <h2>Results</h2>
+    <p style="font-weight: bold;">Total Payment: <span style="font-weight: 100;" id="totalPaymentIslamic">0</span> KD</p>
+    <p style="font-weight: bold;">Principal: <span style="font-weight: 100;" id="principalIslamic">0</span> KD</p>
+    <p style="font-weight: bold;">Bank Profit: <span style="font-weight: 100;" id="bankProfitResultIslamic">0</span> KD</p>
+    <p style="font-weight: bold;">Monthly Installment: <span style="font-weight: 100;" id="monthlyInstallmentIslamic">0</span> KD</p>
+    <p style="font-weight: bold;">Total Installment Count: <span style="font-weight: 100;" id="totalInstallmentCountIslamic">0</span></p>
+    <p style="font-weight: bold;">Monthly Profit Rate: <span style="font-weight: 100;" id="monthlyProfitRateIslamic">0</span>%</p>
+  </section>
+
+  <section class="table-container">
+    <h2>Amortization Schedule</h2>
+    <table id="amortizationTableIslamic" class="hidden">
+      <thead>
+        <tr>
+          <th>Month</th>
+          <th>Monthly Installment (KD)</th>
+          <th>Remaining Principal (KD)</th>
+        </tr>
+      </thead>
+      <tbody id="paymentTableBodyIslamic">
+        <!-- Rows will be added dynamically by JavaScript -->
+      </tbody>
+    </table>
+    <button id="downloadPdfBtnIslamic" disabled>Download PDF</button>
+    <div class="pagination">
+      <button id="prevPageIslamic" disabled>Previous</button>
+      <button id="nextPageIslamic">Next</button>
+    </div>
+  </section>
+</div>
+
     
     
     <!-- Back to Top Button -->

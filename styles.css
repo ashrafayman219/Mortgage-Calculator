@@ -148,7 +148,7 @@ th {
   cursor: not-allowed;
 }
 
-@media (max-width: 600px) {
+/* @media (max-width: 600px) {
   .container {
       width: 100%;
   }
@@ -156,7 +156,7 @@ th {
   table {
       font-size: 14px;
   }
-}
+} */
 
 
 
